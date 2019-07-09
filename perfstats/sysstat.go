@@ -9,7 +9,7 @@ import (
 )
 
 // AppVersion - current app version
-const AppVersion = "0.3.0"
+const AppVersion = "0.4.0"
 
 // StatEntry specific performance data sweep
 type StatEntry struct {
@@ -37,7 +37,7 @@ func lowerFirst(str string) string {
 	return strings.ToLower(string(str[0])) + str[1:]
 }
 
-// GetPlatformInfo show platform details
+// GetPlatformInfo get platform details
 func GetPlatformInfo() (interface{}, error) {
 
 	hostname, err := os.Hostname()
@@ -50,7 +50,8 @@ func GetPlatformInfo() (interface{}, error) {
 }
 
 // PlatformSysStats Query performance stats
-// (calls either _linux.go or _windows perfstats implementations)
+// (calls either _linux.go or _windows perfstats implementations
+// depending on the platform it's running on)
 func PlatformSysStats() (interface{}, error) {
 
 	// find out current stats:

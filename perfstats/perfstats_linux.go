@@ -128,9 +128,8 @@ func getCPUStats() (StatEntry, error) {
 		fmtUtilization := strconv.FormatFloat(cpuUtilization, 'f', 6, 64)
 		// Populate returned cpu performance stats
 		cpuStats = append(cpuStats, map[string]string{
-			"cpuName":   cpuName,
-			"value":     fmtUtilization,
-			"valueType": "% CPU Utilization",
+			"cpuName":     cpuName,
+			"utilization": fmtUtilization,
 		})
 	}
 
@@ -164,26 +163,19 @@ func getMemoryStats() (StatEntry, error) {
 	statEntry.Stats = append(
 		memStats,
 		map[string]string{
-			"value":     memInfo[memoryAvailable],
-			"valueType": "Memory Available (bytes)",
+			"total":     memInfo[memoryTotal],
+			"used":      memInfo[memoryUsed],
+			"available": memInfo[memoryAvailable],
 		})
 
 	return statEntry, nil
-}
-
-// Free returns usage%, get available % to match windows counter output
-func getSpaceAvailablePercentage(diskMap map[string]string) string {
-	availableSpace, _ := strconv.ParseFloat(diskMap["available"], 64)
-	usedSpace, _ := strconv.ParseFloat(diskMap["used"], 64)
-
-	return strconv.FormatFloat(availableSpace*100/(availableSpace+usedSpace), 'f', 6, 64)
 }
 
 func getDiskStats() (StatEntry, error) {
 	var statEntry StatEntry
 	var diskStats []map[string]string
 
-	cmdResult := exec.Command("df")
+	cmdResult := exec.Command("df", "-B1")
 	out, err := cmdResult.Output()
 	if err != nil {
 		return statEntry, err
@@ -212,8 +204,10 @@ func getDiskStats() (StatEntry, error) {
 			lineMap[headers[i]] = tokens[i]
 		}
 
-		lineMap["valueType"] = "Space Available"
-		lineMap["value"] = getSpaceAvailablePercentage(lineMap)
+		lineMap["size"] = lineMap["1B-blocks"]
+		lineMap["freeSpace"] = lineMap["available"]
+
+		delete(lineMap, "available")
 		diskStats = append(diskStats, lineMap)
 	}
 
