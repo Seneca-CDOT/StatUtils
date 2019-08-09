@@ -207,3 +207,8 @@ Start perfmonitor by running:
 Start perfmonitor by running:
 
 `./perfmonitor`
+
+**Pushing new Release**
+
+Executables for the app can be automatically packaged & released on [github releases page](https://github.com/Seneca-CDOT/StatUtils/releases). A new build/release pipeline can be triggered by bumping app version returned by `perfmonitor -version` command (`AppVersion` defined in `perfstats/sysstat.go`).
+Build results can be viewed on StatUtils [build page](https://circleci.com/gh/Seneca-CDOT/StatUtils/tree/master).
